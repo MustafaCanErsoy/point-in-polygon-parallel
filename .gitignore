@@ -1,0 +1,13 @@
+# Derlenmiş Java sınıfları
+out/
+*.class
+
+# Word/Office geçici kilit dosyaları
+~$*
+
+# IDE / OS
+.vs/
+.idea/
+*.iml
+Thumbs.db
+.DS_Store

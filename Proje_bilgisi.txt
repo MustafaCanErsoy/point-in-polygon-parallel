@@ -1,0 +1,39 @@
+Proje kapsamında sizden seçtiğiniz bir problemi parallelleştirerek çözmeniz beklenmektedir. 
+
+1. Grup
+
+SIMD mimarisi kullanarak sıralama (Aparapi Programını kulanınız.)
+
+2. Grup + 10 bonus puan
+
+Thread kullanarak bir sayı dizisine ait x ve y koordinatlarının convex olup olmadığını saptayınız. 
+
+3. Grup + 10 bonus puan
+
+SIMD mimarisi kullanarak N-Body problemini çözünüz. (Aparapi Programını kulanınız.)
+
+4. Grup + 10 bonus puan
+
+Concav yada convex bir poligon olacak şekilde belirli x, ve y koordinat ikilileri verilmiştir. Bir noktanın bu poligonun içinde olup olmadığını parallel progragramlama ile bulunuz.
+
+5. Grup + 10 bonus puan
+
+Verilen bir sembol dizisini CYK ayrıştırma algoritmasını kullanarak parallel çözümünü yapınız. Burada tek bir cümle için algoritma paralel çalışmalıdır.
+
+Yukarıda belirtilen gruplara ait problemlerde birini  seçerek uygulamanızı video yoluyla yada canlı olarak sunduğunuz taktirde yanında belirtilen puan final notuna eklenecektir. Proje notunuz seçtiğini problemden bağımsız olarak sunum içeriğinize göre ve yaptığınz çözümünüze göre verilecektir.
+
+Projenizi ya tekli yada ikili gruplar halinde yapabilirsiniz. 
+
+İsterler:
+
+Proje raporu en az 2 en fazla 5 sayfa olacak şekilde yazınız. Aşağıdaki isterleri sağlayınız.
+
+1) Programın çalışma prensibini, kullandığınız fonksiyonları ve çalışma örneklerini rapora koyarak anlatınız.
+
+2) Programda elde ettiğiniz hızlanma katsayısını ve hangi parametreler ile ne kadar hızlanma oluştuğunu veriniz. Örneğin nokta sayısı 100 için hızlanma katsayısını 3.56 iken 200 nokta için 4.2'dir.
+
+3) Elde ettiğiniz paralel çözümü anlatınız, açıklayınız.
+
+Proje raporunuzu veya Github linkini buradan yükleyebilirsiniz.
+Proje dosyası (Github, Drive) çalıştırma dosyası, kod bloğunu, ve deneysel süre ölçüm testlerinizi içermelidir. 
+Proje son teslim tarihi 12 Haziran 2026 olarak belirlenmiştir.

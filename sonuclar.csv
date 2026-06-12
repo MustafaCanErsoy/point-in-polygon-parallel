@@ -1,0 +1,11 @@
+deney;parametre;deger;sirali_ms;paralel_ms;speedup;verim_yuzde;icerde
+nokta_sayisi;N;100;0,040;0,835;0,048;;37
+nokta_sayisi;N;1000;0,231;0,837;0,276;;322
+nokta_sayisi;N;10000;0,983;1,099;0,895;;2975
+nokta_sayisi;N;100000;4,226;2,460;1,717;;29936
+nokta_sayisi;N;1000000;41,741;13,547;3,081;;300251
+nokta_sayisi;N;5000000;223,624;67,807;3,298;;1501826
+thread_olcekleme;T;1;217,429;220,083;0,988;98,8;
+thread_olcekleme;T;2;217,429;174,794;1,244;62,2;
+thread_olcekleme;T;4;217,429;130,596;1,665;41,6;
+thread_olcekleme;T;8;217,429;84,739;2,566;32,1;

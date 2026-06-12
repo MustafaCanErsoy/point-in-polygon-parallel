@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<title>Paralel Programlama Projesi - Grup 4</title>
+<style>
+  body { font-family: "Calibri","Segoe UI",Arial,sans-serif; font-size: 11pt;
+         line-height: 1.45; color: #1a1a1a; margin: 2.2cm; }
+  h1 { font-size: 19pt; color: #14387f; margin-bottom: 2px; }
+  h2 { font-size: 14pt; color: #14387f; border-bottom: 2px solid #14387f;
+       padding-bottom: 3px; margin-top: 22px; }
+  h3 { font-size: 12pt; color: #1f4ea1; margin-top: 16px; }
+  table { border-collapse: collapse; width: 100%; margin: 10px 0; font-size: 10.5pt; }
+  th, td { border: 1px solid #9bb0d0; padding: 5px 8px; text-align: right; }
+  th { background: #dce6f6; color: #14387f; }
+  td:first-child, th:first-child { text-align: left; }
+  code, pre { font-family: Consolas,"Courier New",monospace; }
+  pre { background: #f3f5f9; border: 1px solid #d6dcea; border-radius: 4px;
+        padding: 10px; font-size: 9.5pt; overflow-x: auto; }
+  .meta { background: #f3f5f9; border-left: 4px solid #14387f; padding: 8px 14px; }
+  .note { background: #fff7e6; border-left: 4px solid #e0a106; padding: 6px 12px; font-size: 10pt; }
+  img { max-width: 100%; border: 1px solid #ccc; }
+  .green { color: #00a000; font-weight: bold; }
+  .red { color: #d23232; font-weight: bold; }
+</style>
+</head>
+<body>
+
+<h1>Paralel Programlama Projesi — Grup 4</h1>
+<p style="font-size:13pt;color:#1f4ea1;margin-top:0;">
+Bir Noktanın Poligon İçinde Olup Olmadığının Paralel Tespiti</p>
+
+<div class="meta">
+<b>Problem:</b> Konkav ya da konveks bir poligon (x, y köşe ikilileri) verildiğinde,
+bir noktanın bu poligonun içinde olup olmadığını paralel programlama ile bulmak.<br>
+<b>Tarih:</b> 12 Haziran 2026
+</div>
+
+<h3>Ne Yaptık? (Özet)</h3>
+<p>Çok sayıda noktanın konkav/konveks bir poligonun içinde olup olmadığını
+<b>Ray Casting</b> algoritmasıyla belirleyen bir program yazdık; bu işi önce <b>sıralı</b>,
+sonra Java thread'leriyle <b>paralel</b> olarak yaptık ve iki yöntemin sürelerini ölçerek
+<b>hızlanma katsayısını (speedup)</b> raporladık. Sonuçları konsol tablosu, CSV dosyası ve
+bir görsel olarak çıktıladık.</p>
+
+<h3>Neler Kullandık? (Teknolojiler ve Araçlar)</h3>
+<table>
+<tr><th style="text-align:left">Araç / Teknoloji</th><th style="text-align:left">Kullanım amacı</th></tr>
+<tr><td>Java 8 (JDK 1.8)</td><td style="text-align:left">Programlama dili ve derleyici</td></tr>
+<tr><td><code>java.util.concurrent</code><br>(ExecutorService, Callable, Future)</td><td style="text-align:left">Thread havuzu ile paralelleştirme ve sonuç toplama (redüksiyon)</td></tr>
+<tr><td>Ray Casting algoritması</td><td style="text-align:left">Bir noktanın poligon içinde olup olmadığını test etme</td></tr>
+<tr><td><code>System.nanoTime()</code></td><td style="text-align:left">Süre ölçümü (sıralı ve paralel)</td></tr>
+<tr><td>Java AWT / <code>ImageIO</code></td><td style="text-align:left">Poligon ve noktaların PNG görseline çizilmesi</td></tr>
+</table>
+
+<h2>1. Problemin Tanımı ve Çalışma Prensibi</h2>
+<p>Bir poligon, sıralı <code>(x, y)</code> köşe noktalarıyla tanımlanır. Amaç, verilen bir
+test noktasının bu poligonun <b>içinde mi yoksa dışında mı</b> olduğunu belirlemektir. Bu
+temel hesaplama; bilgisayar grafiği, coğrafi bilgi sistemleri (CBS), çarpışma testi ve
+harita uygulamalarında sık kullanılır.</p>
+
+<p>Kullandığımız yöntem <b>Ray Casting (Işın Gönderme)</b> algoritmasıdır:</p>
+<div class="meta">Test noktasından bir yöne (bizde +x yönüne) sonsuz bir ışın gönderilir.
+Bu ışının poligonun <b>kenarlarını kaç kez kestiği</b> sayılır. Kesişim sayısı <b>tek</b>
+ise nokta <b>içeride</b>, <b>çift</b> ise <b>dışarıdadır</b>.</div>
+
+<p>Bu yöntemin en önemli avantajı, hem <b>konveks (dışbükey)</b> hem de <b>konkav
+(içbükey)</b> poligonlarda doğru çalışmasıdır; poligonun girinti-çıkıntılı olması sonucu
+değiştirmez. Testimizde bilinçli olarak <b>12 köşeli konkav (yıldız biçimli)</b> bir
+poligon kullanılmıştır.</p>
+
+<h3>Neden paralelleştirmeye uygun?</h3>
+<p>Her test noktası <b>diğerlerinden tamamen bağımsız</b> olarak değerlendirilir. Bir
+noktanın sonucu başka bir noktayı etkilemez. Bu, problemi <i>"utanç verici derecede paralel
+(embarrassingly parallel)"</i> sınıfına sokar: noktaları thread'lere bölmek için kilit
+(lock), karşılıklı dışlama veya thread'ler arası iletişim gerekmez. Tek senkronizasyon
+noktası, en sonda her thread'in kısmi sayımının toplanmasıdır (redüksiyon).</p>
+
+<h2>2. Kullanılan Fonksiyonlar</h2>
+<table>
+<tr><th>Fonksiyon</th><th style="text-align:left">Görevi</th></tr>
+<tr><td><code>nokativarMi(...)</code></td><td style="text-align:left"><b>Çekirdek algoritma.</b>
+Tek bir noktanın poligon içinde olup olmadığını Ray Casting ile döndürür.</td></tr>
+<tr><td><code>sirali(...)</code></td><td style="text-align:left"><b>Sıralı çözüm.</b> Tüm test
+noktalarını tek thread ile test edip içeride olanları sayar (baseline süre).</td></tr>
+<tr><td><code>paralel(..., threadSayisi)</code></td><td style="text-align:left"><b>Paralel
+çözüm.</b> Nokta dizisini parçalara böler; her parçayı <code>ExecutorService</code> ile ayrı
+bir <code>Callable</code>'da işler, <code>Future.get()</code> ile toplar.</td></tr>
+<tr><td><code>yildizPoligon(...)</code></td><td style="text-align:left">Test için konkav
+(yıldız) poligon üretir.</td></tr>
+<tr><td><code>main(...)</code></td><td style="text-align:left">Farklı parametreler için süre
+ölçer, speedup hesaplar, tabloyu ve CSV'yi üretir.</td></tr>
+</table>
+
+<h3>Çekirdek algoritmanın kodu (özet)</h3>
+<pre>public static boolean nokativarMi(double[] polyX, double[] polyY, double px, double py) {
+    int n = polyX.length;
+    boolean icerde = false;
+    for (int i = 0, j = n - 1; i &lt; n; j = i++) {
+        boolean yKesisiyor = (polyY[i] &gt; py) != (polyY[j] &gt; py);
+        if (yKesisiyor) {
+            double kesisimX = (polyX[j] - polyX[i]) * (py - polyY[i])
+                            / (polyY[j] - polyY[i]) + polyX[i];
+            if (px &lt; kesisimX) icerde = !icerde; // her kesişimde durumu çevir
+        }
+    }
+    return icerde;
+}</pre>
+
+<h2>3. Paralel Çözümün Açıklaması</h2>
+<p>Paralel çözümde <b>veri paralelliği (data parallelism)</b> uygulanmıştır:</p>
+<ol>
+<li><b>Bölme (Partition):</b> <code>N</code> nokta, <code>T</code> thread için yaklaşık eşit
+<code>T</code> parçaya bölünür (her parça <code>[bas, son)</code> aralığı).</li>
+<li><b>Dağıtım:</b> <code>ExecutorService</code> ile her parça bir <code>Callable&lt;Integer&gt;</code>
+görevine verilir; her görev yalnızca kendi aralığını sayar ve <b>yerel</b> bir sayaç tutar —
+paylaşılan değişkene yazmadığı için kilit gerekmez.</li>
+<li><b>Redüksiyon (Reduction):</b> Tüm thread'ler bitince kısmi sayımlar
+<code>Future.get()</code> ile toplanır.</li>
+</ol>
+<p>Bu tasarımda <b>paylaşılan yazılabilir durum yoktur</b> → veri yarışı oluşmaz; poligon
+dizileri yalnızca <b>okunur</b>, iş yükü thread'lere dengeli dağıtılır. <b>Doğruluk:</b> her
+ölçümde sıralı ve paralel sonuç karşılaştırılır; tüm testlerde <b>birebir aynı</b> çıkmıştır.</p>
+
+<h2>4. Deneysel Sonuçlar ve Hızlanma Katsayısı</h2>
+<p><b>Test ortamı:</b> Windows 11, 8 mantıksal çekirdekli CPU, Java 1.8 (HotSpot). Her ölçüm
+5 tekrarın ortalamasıdır; JIT etkisini elemek için "ısınma" turu yapılmıştır. Noktalar sabit
+tohumla (seed=42) üretildiğinden sonuçlar tekrar edilebilirdir.</p>
+<div class="meta"><b>Hızlanma katsayısı (Speedup) = Sıralı süre / Paralel süre</b></div>
+
+<h3>Program Çıktısı (Konsol)</h3>
+<p>Program çalıştırıldığında ürettiği çıktı (kısaltılmış):</p>
+<pre>============================================================
+ GRUP 4 - Nokta Poligon Icinde mi? (Paralel Cozum)
+============================================================
+ CPU cekirdek  : 8   |   Thread sayisi : 8
+ Algoritma     : Ray Casting (O(N * V))
+------------------------------------------------------------
+Nokta        | Sirali (ms)   | Paralel (ms)  | Speedup   | Icerde
+------------------------------------------------------------
+100          | 0,040         | 0,835         | 0,05      | 37 (OK)
+10000        | 0,983         | 1,099         | 0,90      | 2975 (OK)
+1000000      | 41,741        | 13,547        | 3,08      | 300251 (OK)
+5000000      | 223,624       | 67,807        | 3,30      | 1501826 (OK)
+------------------------------------------------------------
+Olcumler CSV'ye yazildi: sonuclar.csv</pre>
+<p>"(OK)" işareti, her satırda sıralı ve paralel çözümün <b>aynı</b> sonucu bulduğunu
+(doğruluğun korunduğunu) gösterir. Aşağıdaki tablolar bu ölçümlerin tamamıdır.</p>
+
+<h3>Deney 1 — Nokta sayısının etkisi (8 thread sabit)</h3>
+<table>
+<tr><th>Nokta sayısı</th><th>Sıralı (ms)</th><th>Paralel (ms)</th><th>Speedup</th><th>İçeride</th></tr>
+<tr><td>100</td><td>0.040</td><td>0.835</td><td><b>0.05</b></td><td>37</td></tr>
+<tr><td>1.000</td><td>0.231</td><td>0.837</td><td><b>0.28</b></td><td>322</td></tr>
+<tr><td>10.000</td><td>0.983</td><td>1.099</td><td><b>0.90</b></td><td>2.975</td></tr>
+<tr><td>100.000</td><td>4.226</td><td>2.460</td><td><b>1.72</b></td><td>29.936</td></tr>
+<tr><td>1.000.000</td><td>41.741</td><td>13.547</td><td><b>3.08</b></td><td>300.251</td></tr>
+<tr><td>5.000.000</td><td>223.624</td><td>67.807</td><td><b>3.30</b></td><td>1.501.826</td></tr>
+</table>
+<p><b>Yorum:</b> Nokta sayısı arttıkça speedup belirgin yükselir.
+<b>Küçük N (100–10.000):</b> Speedup &lt; 1; thread havuzu kurma ve toplama gibi sabit ek
+maliyetler asıl işten pahalı olduğundan paralel çözüm <b>yavaştır</b>.
+<b>Büyük N (≥100.000):</b> İş yükü ek maliyetleri aşar; 5 milyon noktada <b>~3.3 kat</b>
+hızlanma elde edilir. Yani 100 nokta için speedup 0.05 iken, 5.000.000 nokta için 3.30
+olmuştur — paralelleştirme ancak yeterince büyük problemde kazançlıdır.</p>
+
+<h3>Deney 2 — Thread sayısının etkisi (N = 5.000.000 sabit)</h3>
+<table>
+<tr><th>Thread</th><th>Paralel (ms)</th><th>Speedup</th><th>Verimlilik (%)</th></tr>
+<tr><td>1</td><td>220.083</td><td><b>0.99</b></td><td>98.8</td></tr>
+<tr><td>2</td><td>174.794</td><td><b>1.24</b></td><td>62.2</td></tr>
+<tr><td>4</td><td>130.596</td><td><b>1.67</b></td><td>41.6</td></tr>
+<tr><td>8</td><td>84.739</td><td><b>2.57</b></td><td>32.1</td></tr>
+</table>
+<p style="font-size:10pt">Verimlilik (%) = Speedup / Thread sayısı (ideal = %100). Referans sıralı süre: 217.4 ms.</p>
+<p><b>Yorum:</b> Thread sayısı arttıkça süre düşer, speedup yükselir (1.24 → 1.67 → 2.57).
+Ancak <b>verimlilik düşer</b> (~%99 → ~%32). Nedenleri: <b>Amdahl Yasası</b> (seri kalan
+kısımlar darboğaz olur), <b>donanım sınırı</b> (8 mantıksal çekirdek = 4 fiziksel +
+Hyper-Threading) ve <b>bellek bant genişliği</b> (thread'ler bellek erişiminde yarışır).</p>
+<div class="note"><b>Not:</b> Mutlak süreler makine yüküne göre çalıştırmalar arası ±%15–20
+değişebilir; eğilim (büyük N ve daha çok thread → daha yüksek speedup) tutarlıdır. Tüm
+ölçümler <code>sonuclar.csv</code> dosyasına da yazılır.</div>
+
+<h3>4.3 Görsel Doğrulama (Çalışma Örneği)</h3>
+<p>Algoritmanın konkav poligonda doğru çalıştığı gözle de doğrulanmıştır. Aşağıda 12 köşeli
+konkav (yıldız) poligon ve rastgele 4000 nokta gösterilir: içeride kalanlar
+<span class="green">yeşil</span>, dışında kalanlar <span class="red">kırmızı</span>. Tüm
+yeşil noktalar yıldızın içinde, tüm kırmızı noktalar dışındadır — içbükey kenarlarda dahi
+sınıflandırma doğrudur.</p>
+<p style="text-align:center"><img src="poligon_gorsel.png" alt="Poligon gorsel" width="520"></p>
+<p>Tek bir nokta komut satırından da sorgulanabilir:</p>
+<pre>&gt; java NoktaPoligonIcinde nokta 500 500   -&gt;  Nokta (500, 500) -&gt; ICERIDE
+&gt; java NoktaPoligonIcinde nokta 10 10     -&gt;  Nokta (10, 10)   -&gt; DISARIDA</pre>
+
+<h2>5. Sonuç</h2>
+<p>Bir noktanın konkav/konveks poligon içinde olup olmadığı problemi, Ray Casting
+algoritmasıyla çözülmüş ve Java thread havuzu ile paralelleştirilmiştir. Problem doğası
+gereği veri-paralel olduğundan, paralelleştirme <b>doğruluğu bozmadan</b> (sıralı ve paralel
+sonuçlar birebir aynı) önemli hızlanma sağlamıştır:</p>
+<ul>
+<li>Yeterince büyük veride (5M nokta) <b>~3.3 kat</b> hızlanma elde edilmiştir.</li>
+<li>Hızlanma, <b>problem boyutu büyüdükçe</b> ve <b>thread sayısı arttıkça</b> yükselmiş;
+paralel verimlilik ise ek maliyetler ve donanım sınırları nedeniyle azalmıştır.</li>
+<li>Küçük veride ek maliyet kazançtan büyük olduğundan, paralel çözüm ancak belirli bir
+eşiğin üzerinde (≈100.000 nokta) avantajlı hâle gelmiştir.</li>
+</ul>
+<p>Bu sonuçlar paralel programlamanın temel ilkesini doğrular: <b>paralelleştirme bedava
+değildir; kazanç ancak iş yükü, ek maliyeti aştığında ortaya çıkar.</b></p>
+
+</body>
+</html>
