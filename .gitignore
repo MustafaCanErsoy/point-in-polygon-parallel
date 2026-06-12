@@ -11,3 +11,6 @@ out/
 *.iml
 Thumbs.db
 .DS_Store
+
+# Odev/istek metni (teslimat degil, yerelde tutulur)
+Proje_bilgisi.txt
