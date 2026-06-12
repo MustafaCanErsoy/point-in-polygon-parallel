@@ -6,22 +6,16 @@
 noktanın bu poligonun içinde olup olmadığını paralel programlama ile bulmak.  
 **Tarih:** 12 Haziran 2026
 
-### Ne Yaptık? (Özet)
-Çok sayıda noktanın konkav/konveks bir poligonun içinde olup olmadığını **Ray Casting**
-algoritmasıyla belirleyen bir program yazdık; bu işi önce **sıralı**, sonra Java
-thread'leriyle **paralel** olarak yaptık ve iki yöntemin sürelerini ölçerek **hızlanma
-katsayısını (speedup)** raporladık. Sonuçları konsol tablosu, CSV dosyası ve bir görsel
-olarak çıktıladık.
+## Özet
 
-### Neler Kullandık? (Teknolojiler ve Araçlar)
-
-| Araç / Teknoloji | Kullanım amacı |
-|------------------|----------------|
-| Java 8 (JDK 1.8) | Programlama dili ve derleyici |
-| `java.util.concurrent` (ExecutorService, Callable, Future) | Thread havuzu ile paralelleştirme ve sonuç toplama (redüksiyon) |
-| Ray Casting algoritması | Bir noktanın poligon içinde olup olmadığını test etme |
-| `System.nanoTime()` | Süre ölçümü (sıralı ve paralel) |
-| Java AWT / `ImageIO` | Poligon ve noktaların PNG görseline çizilmesi |
+Bu projede, konkav (içbükey) ya da konveks (dışbükey) bir poligonun içinde çok sayıda
+noktanın bulunup bulunmadığı problemi **paralel programlama** ile çözülmüştür.
+**Ray Casting (ışın gönderme)** algoritması kullanılarak problem önce **sıralı**, ardından
+**Java thread havuzu** ile **paralel** olarak çözülmüş; iki yöntemin çalışma süreleri
+ölçülerek **hızlanma katsayısı (speedup)** analiz edilmiştir. Geliştirmede **Java 8**,
+paralelleştirme için `java.util.concurrent` paketi (`ExecutorService`, `Callable`,
+`Future`), süre ölçümü için `System.nanoTime()` ve görselleştirme için **Java AWT / ImageIO**
+kullanılmıştır. Sonuçlar konsol tablosu, CSV dosyası ve PNG görseli olarak sunulmuştur.
 
 ---
 
