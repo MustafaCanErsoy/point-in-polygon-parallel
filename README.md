@@ -85,8 +85,7 @@ yazılabilir durum olmadığı için **veri yarışı (race condition) oluşmaz*
 │   ├── NoktaPoligonIcinde.java   # Ana program: algoritma + sıralı/paralel + süre ölçümü + CSV
 │   └── PoligonGorsel.java        # Poligon ve noktaları PNG'ye çizen görselleştirme
 ├── calistir.ps1                  # Derle + çalıştır (JDK'yı otomatik bulur)
-├── RAPOR.html                    # Resmi proje raporu — kapaklı, Word/PDF'e çevrilmeye hazır
-├── RAPOR.md                      # Raporun GitHub'da görüntülenen sade sürümü
+├── RAPOR.html                    # Proje raporu — kapaklı, Word/PDF'e çevrilmeye hazır
 ├── poligon_gorsel.png            # Örnek görsel çıktı
 ├── sonuclar.csv                  # Ölçüm çıktıları (Excel'de grafik için)
 └── README.md
@@ -96,14 +95,13 @@ yazılabilir durum olmadığı için **veri yarışı (race condition) oluşmaz*
 
 ## 📄 Rapor
 
-Resmi rapor (kapaklı, biçimlendirilmiş) **`RAPOR.html`** dosyasındadır; çalışma prensibi,
+Proje raporu (kapaklı, biçimlendirilmiş) **`RAPOR.html`** dosyasındadır; çalışma prensibi,
 kullanılan fonksiyonlar, paralel çözüm açıklaması, deneysel sonuçlar ve hızlanma analizini
-içerir (~5 sayfa). Word/PDF'e çevirmek için `RAPOR.html`'i bir tarayıcıda veya Word'de açıp
+içerir. Word/PDF'e çevirmek için `RAPOR.html`'i bir tarayıcıda veya Word'de açıp
 **Yazdır → PDF olarak kaydet** (ya da Word'de **Farklı Kaydet → .docx**) yapabilirsiniz.
-GitHub üzerinde hızlı okuma için sade markdown sürümü **[RAPOR.md](RAPOR.md)** dosyasındadır.
 
 ---
 
 ## 👤 Ekip
 
-Paralel Programlama dersi — Grup 4 projesi. Eğitim amaçlıdır.
+Paralel Programlama (BLM0461) dersi — Grup 4 projesi. Eğitim amaçlıdır.
