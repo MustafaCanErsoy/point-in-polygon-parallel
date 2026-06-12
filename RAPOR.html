@@ -360,14 +360,22 @@
 <!-- ── Özet ── -->
 <div class="abstract">
   <h2>Özet</h2>
-  Bu projede, konkav (içbükey) ya da konveks (dışbükey) bir poligonun içinde çok sayıda noktanın
-  bulunup bulunmadığı problemi <strong>paralel programlama</strong> ile çözülmüştür.
-  <strong>Ray Casting (ışın gönderme)</strong> algoritması kullanılarak problem önce <em>sıralı</em>,
-  ardından <em>Java thread havuzu</em> (<code>java.util.concurrent</code>) ile <em>paralel</em> olarak
-  çözülmüş ve iki yöntemin süreleri ölçülerek <strong>hızlanma katsayısı (speedup)</strong> analiz
-  edilmiştir. Problem veri-paralel yapıda olduğundan, paralelleştirme doğruluğu bozmadan 5&nbsp;milyon
-  nokta için <strong>~3,3 kat</strong> hızlanma sağlamıştır.<br><br>
-  <strong>Anahtar Kelimeler:</strong> Paralel Programlama, Ray Casting, Thread Havuzu, Hızlanma &nbsp;|&nbsp;
+  <strong>Ne yaptık?</strong> Konkav (içbükey) ya da konveks (dışbükey) bir poligonun
+  <code>(x, y)</code> köşe ikilileriyle verildiği durumda, çok sayıda test noktasının bu poligonun
+  <em>içinde mi yoksa dışında mı</em> olduğunu otomatik olarak belirleyen bir nokta-içerme testi
+  sistemi geliştirdik. Sistem aynı problemi hem <em>sıralı</em> hem de <em>çok thread'li paralel</em>
+  çalıştırır; her nokta için sonucu "içeride/dışarıda" olarak üretir ve iki yöntemin sürelerini
+  ölçerek <strong>hızlanma katsayısını (speedup)</strong> raporlar.<br><br>
+  <strong>Neler kullandık?</strong> Çekirdek yöntem olarak <strong>Ray Casting (ışın gönderme)</strong>
+  algoritması; paralelleştirme için <strong>Java thread havuzu</strong>
+  (<code>java.util.concurrent</code> — <code>ExecutorService</code>, <code>Callable</code>,
+  <code>Future</code>) kullanılmıştır. Ölçümler 8 mantıksal çekirdekli bir makinede, sabit tohumlu
+  rastgele noktalarla ve ısınma turu sonrası 5 tekrarın ortalaması alınarak yapılmıştır. Problem
+  <em>veri-paralel</em> yapıda olduğundan, paralelleştirme <strong>doğruluğu bozmadan</strong>
+  5&nbsp;milyon nokta için <strong>~3,3 kat</strong> hızlanma sağlamış; doğruluk her ölçümde
+  sıralı çözümle karşılaştırılarak teyit edilmiştir.<br><br>
+  <strong>Anahtar Kelimeler:</strong> Paralel Programlama, Ray Casting, Thread Havuzu
+  (ExecutorService), Veri Paralelliği, Hızlanma (Speedup) &nbsp;|&nbsp;
   <strong>GitHub:</strong>
   <a href="https://github.com/MustafaCanErsoy/point-in-polygon-parallel" target="_blank">https://github.com/MustafaCanErsoy/point-in-polygon-parallel</a>
 </div>
