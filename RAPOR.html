@@ -9,13 +9,13 @@
 
   body {
     font-family: "Times New Roman", Times, serif;
-    font-size: 10.5pt;
-    line-height: 1.38;
+    font-size: 9.5pt;
+    line-height: 1.28;
     color: #1a1a1a;
     background: #fff;
     max-width: 210mm;
     margin: 0 auto;
-    padding: 14mm 16mm;
+    padding: 11mm 13mm;
   }
 
   /* ── Kapak ── */
@@ -114,17 +114,17 @@
 
   /* ── Bölümler ── */
   h2 {
-    font-size: 12.5pt;
+    font-size: 12pt;
     color: #2c3e50;
-    margin: 14px 0 6px 0;
+    margin: 9px 0 5px 0;
     padding-bottom: 3px;
     border-bottom: 1.5px solid #d0d7df;
     page-break-after: avoid;
   }
   h3 {
-    font-size: 11pt;
+    font-size: 10.5pt;
     color: #34495e;
-    margin: 10px 0 4px 0;
+    margin: 7px 0 3px 0;
     page-break-after: avoid;
   }
   h4 {
@@ -190,7 +190,6 @@
     font-size: 8.6pt;
     line-height: 1.32;
     overflow-x: auto;
-    page-break-inside: avoid;
     white-space: pre;
   }
 
@@ -204,7 +203,6 @@
     margin: 6px 0 8px 0;
     font-size: 10pt;
     line-height: 1.45;
-    page-break-inside: avoid;
   }
 
   /* ── Listeler ── */
@@ -218,14 +216,13 @@
     padding: 7px 11px;
     margin: 7px 0;
     font-size: 10pt;
-    page-break-inside: avoid;
   }
   .kutu.yesil   { background: #eafaf1; border-color: #27ae60; }
   .kutu.turuncu { background: #fef9e7; border-color: #f39c12; }
 
   /* ── Kaynakça ── */
-  .kaynaklar ol { font-size: 11pt; }
-  .kaynaklar li { margin-bottom: 7px; line-height: 1.5; }
+  .kaynaklar ol { font-size: 8.8pt; margin-top: 2px; }
+  .kaynaklar li { margin-bottom: 2px; line-height: 1.25; }
 
   /* ── YZ beyan tablosu ── */
   table.yz-tablo {
@@ -317,7 +314,7 @@
   .metrik strong { display: block; font-size: 14pt; color: #f1c40f; }
 
   @media print {
-    body { padding: 0; font-size: 10.5pt; }
+    body { padding: 0; font-size: 9.5pt; }
     a { color: inherit; text-decoration: none; }
     .cover { page-break-after: always; height: 250mm; }
   }
@@ -381,10 +378,9 @@
 
 <p>Bir poligon, sıralı <code>(x, y)</code> köşe noktalarıyla tanımlanır. Bu projedeki amaç,
 verilen bir noktanın bu poligonun <strong>içinde mi yoksa dışında mı</strong> olduğunu
-belirlemektir. Bu temel hesaplama; bilgisayar grafiği, coğrafi bilgi sistemleri (CBS),
-çarpışma testi ve harita uygulamaları gibi pek çok alanda kullanılır. Problem; çok sayıda
-noktanın aynı poligona karşı test edilmesi gerektiğinde hesaplama açısından maliyetli hâle
-gelir ve bu nedenle <strong>paralelleştirmeye</strong> uygun bir aday oluşturur.</p>
+belirlemektir. Bilgisayar grafiği, CBS ve çarpışma testi gibi alanlarda kullanılan bu
+hesaplama, çok sayıda noktanın aynı poligona karşı test edilmesi gerektiğinde maliyetli hâle
+gelir ve bu nedenle <strong>paralelleştirmeye</strong> uygun bir adaydır.</p>
 
 <h3>1.1 Ray Casting (Işın Gönderme) Yöntemi</h3>
 <p>Kullanılan yöntemde, test noktasından bir yöne (+x yönü) sonsuz bir ışın gönderilir ve bu
@@ -395,10 +391,9 @@ kenar (köşe&nbsp;<em>i</em> → köşe&nbsp;<em>j</em>) için kesişim koşulu
 (polyY[i] &gt; py) ≠ (polyY[j] &gt; py)  <strong>ve</strong>  px &lt; kesişimX<br>
 kesişimX = (polyX[j]−polyX[i])·(py−polyY[i]) / (polyY[j]−polyY[i]) + polyX[i]
 </div>
-<p>Yöntemin en önemli avantajı, hem konveks (dışbükey) hem de <strong>konkav (içbükey)</strong>
-poligonlarda doğru çalışmasıdır; poligonun girinti-çıkıntılı olması sonucu değiştirmez. Bu
-nedenle testlerde bilinçli olarak <strong>12 köşeli konkav (yıldız biçimli)</strong> bir
-poligon seçilmiştir.</p>
+<p>Yöntemin en önemli avantajı, hem konveks hem de <strong>konkav (içbükey)</strong>
+poligonlarda doğru çalışmasıdır; bu nedenle testlerde bilinçli olarak <strong>12 köşeli konkav
+(yıldız biçimli)</strong> bir poligon seçilmiştir.</p>
 
 <h3>1.2 Paralelleştirmeye Uygunluk</h3>
 <p>Her test noktası diğerlerinden tamamen bağımsız olarak değerlendirilir; bir noktanın
@@ -422,14 +417,13 @@ her thread'in kısmi sayımının toplanmasıdır (redüksiyon).</p>
 </table>
 
 <h3>2.1 Çekirdek Algoritmanın Kodu</h3>
-<pre class="kod">public static boolean nokativarMi(double[] polyX, double[] polyY, double px, double py) {
-    int n = polyX.length;  boolean icerde = false;
-    for (int i = 0, j = n - 1; i &lt; n; j = i++) {
+<pre class="kod">boolean nokativarMi(double[] polyX, double[] polyY, double px, double py) {
+    boolean icerde = false;
+    for (int i = 0, j = polyX.length - 1; i &lt; polyX.length; j = i++)
         if ((polyY[i] &gt; py) != (polyY[j] &gt; py)) {              // kenarin y araligi py'yi iceriyor mu?
-            double kesisimX = (polyX[j]-polyX[i])*(py-polyY[i])/(polyY[j]-polyY[i]) + polyX[i];
-            if (px &lt; kesisimX) icerde = !icerde;               // sagdaki her kesisimde durumu cevir
+            double kx = (polyX[j]-polyX[i])*(py-polyY[i])/(polyY[j]-polyY[i]) + polyX[i];
+            if (px &lt; kx) icerde = !icerde;                      // sagdaki her kesisimde durumu cevir
         }
-    }
     return icerde;
 }</pre>
 
@@ -458,9 +452,8 @@ her thread'in kısmi sayımının toplanmasıdır (redüksiyon).</p>
 ══════════════════════════════════════════════════════ -->
 <h2 id="bolum4">4. Deneysel Sonuçlar ve Hızlanma Katsayısı</h2>
 <p><strong>Test ortamı:</strong> Windows 11, 8 mantıksal çekirdekli CPU, Java 1.8 (HotSpot).
-Her ölçüm 5 tekrarın ortalamasıdır; JIT derleyicisinin etkisini elemek için ölçümden önce
-"ısınma" turu yapılmıştır. Rastgele noktalar sabit tohumla (seed&nbsp;=&nbsp;42) üretildiğinden
-sonuçlar tekrar edilebilirdir.</p>
+Her ölçüm 5 tekrarın ortalamasıdır; JIT etkisini elemek için "ısınma" turu yapılmış ve noktalar
+sabit tohumla (seed&nbsp;=&nbsp;42) üretilmiştir (tekrar edilebilirlik için).</p>
 <div class="formul">Hızlanma Katsayısı (Speedup) = Sıralı süre / Paralel süre</div>
 
 <h3>4.1 Nokta Sayısının Etkisi (8 thread sabit)</h3>
@@ -473,11 +466,10 @@ sonuçlar tekrar edilebilirdir.</p>
   <tr><td>5.000.000</td><td>223,624</td><td>67,807</td><td class="en-iyi">3,30</td><td>1.501.826</td></tr>
 </table>
 <div class="kutu yesil">
-  <strong>Bulgu:</strong> Küçük N'de (≤10.000) speedup&nbsp;&lt;&nbsp;1; thread havuzu kurma ve
-  sonuç toplama gibi sabit ek maliyetler (overhead) asıl işten pahalı olduğu için paralel
-  çözüm yavaştır. Büyük N'de (≥100.000) iş yükü bu maliyetleri aşar ve 5 milyon noktada
-  <strong>~3,3 kat</strong> hızlanma elde edilir. Yani 100 nokta için speedup 0,05 iken,
-  5.000.000 nokta için 3,30 olmuştur.
+  <strong>Bulgu:</strong> Küçük N'de (≤10.000) speedup&nbsp;&lt;&nbsp;1; thread havuzu kurma/toplama
+  gibi sabit ek maliyetler asıl işten pahalı olduğu için paralel çözüm yavaştır. Büyük N'de
+  (≥100.000) iş yükü bu maliyetleri aşar; speedup 100 nokta için 0,05 iken 5 milyon nokta için
+  <strong>3,30 (~3,3 kat)</strong> olur.
 </div>
 
 <h3>4.2 Thread Sayısının Etkisi (N = 5.000.000 sabit)</h3>
@@ -494,15 +486,12 @@ sonuçlar tekrar edilebilirdir.</p>
   <strong>verimlilik düşer</strong> (~%99 → ~%32). Nedenleri: <em>Amdahl Yasası</em> (programın
   seri kalan kısımları darboğaza döner), 8 mantıksal çekirdeğin 4 fiziksel çekirdek +
   Hyper-Threading olması ve thread'lerin <em>bellek bant genişliği</em> için rekabet etmesidir.
+  Mutlak süreler makine yüküne göre çalıştırmalar arası ±%15–20 değişebilir; eğilim tutarlıdır.
 </div>
-<p style="font-size:10pt;color:#555;">Not: Mutlak süreler makine yüküne göre çalıştırmalar arası
-±%15–20 değişebilir; eğilim (büyük N ve daha çok thread → daha yüksek speedup) tutarlıdır. Tüm
-ölçümler <code>sonuclar.csv</code> dosyasına da yazılır.</p>
 
 <h3>4.3 Program Çıktısı ve Görsel Doğrulama</h3>
 <p>Programın ürettiği konsol çıktısı (kısaltılmış) aşağıdadır. "(OK)" işareti, her satırda
-sıralı ve paralel çözümün <strong>aynı</strong> sonucu bulduğunu (doğruluğun korunduğunu)
-gösterir.</p>
+sıralı ve paralel çözümün <strong>aynı</strong> sonucu bulduğunu (doğruluğun korunduğunu) gösterir.</p>
 <pre class="kod">GRUP 4 - Nokta Poligon Icinde mi?   |   CPU cekirdek: 8 | Thread: 8
 --------------------------------------------------------------
 Nokta      | Sirali (ms) | Paralel (ms) | Speedup | Icerde
@@ -512,19 +501,15 @@ Nokta      | Sirali (ms) | Paralel (ms) | Speedup | Icerde
 1000000    |  41,741     |  13,547      |  3,08   | 300251   (OK)
 5000000    | 223,624     |  67,807      |  3,30   | 1501826  (OK)
 --------------------------------------------------------------
-Olcumler CSV'ye yazildi: sonuclar.csv
+Tek nokta sorgusu:  nokta(500,500) -> ICERIDE   |   nokta(10,10) -> DISARIDA</pre>
 
-> java NoktaPoligonIcinde nokta 500 500   ->  Nokta (500, 500) -> ICERIDE
-> java NoktaPoligonIcinde nokta 10 10     ->  Nokta (10, 10)   -> DISARIDA</pre>
-
-<p>Algoritmanın konkav poligonda doğru çalıştığı görsel olarak da doğrulanmıştır. Aşağıdaki
-şekilde 12 köşeli konkav (yıldız) poligon ve rastgele üretilen 4000 nokta yer alır: poligon
-içinde kalanlar yeşil, dışında kalanlar kırmızıdır.</p>
+<p>Algoritmanın konkav poligonda doğru çalıştığı görsel olarak da doğrulanmıştır (Şekil 1):
+12 köşeli konkav (yıldız) poligon ve 4000 rastgele nokta — içeride kalanlar yeşil, dışında
+kalanlar kırmızıdır.</p>
 <figure>
   <img src="poligon_gorsel.png" alt="Nokta-poligon görseli" style="display:block;margin:0 auto;width:300px;max-width:60%;">
   <figcaption>
-    Şekil 1. Ray Casting sonucunun görsel doğrulaması. Yeşil = poligon içinde,
-    Kırmızı = poligon dışında. İçbükey kenarlarda dahi sınıflandırma doğrudur.
+    Şekil 1. Görsel doğrulama — Yeşil: poligon içinde, Kırmızı: dışında (içbükey kenarlarda dahi doğru).
   </figcaption>
 </figure>
 
@@ -539,8 +524,8 @@ ile paralelleştirilmiştir. Temel bulgular:</p>
   <li>Hızlanma, <strong>problem boyutu büyüdükçe</strong> ve <strong>thread sayısı arttıkça</strong> yükselmiş; paralel verimlilik ise ek maliyetler ve donanım sınırları nedeniyle azalmıştır.</li>
   <li>Küçük veride paralelleştirmenin ek maliyeti kazançtan büyük olduğundan, paralel çözüm ancak belirli bir eşiğin (≈100.000 nokta) üzerinde avantajlı hâle gelmiştir.</li>
 </ol>
-<p>Bu sonuçlar paralel programlamanın temel ilkesini doğrular: <strong>paralelleştirme bedava
-değildir; kazanç ancak iş yükü, ek maliyeti aştığında ortaya çıkar.</strong></p>
+<p>Sonuç olarak bu çalışma paralel programlamanın temel ilkesini doğrular: <strong>paralelleştirme
+bedava değildir; kazanç ancak iş yükü, ek maliyeti aştığında ortaya çıkar.</strong></p>
 
 <!-- ══════════════════════════════════════════════════════
      6. KAYNAKLAR
@@ -559,30 +544,15 @@ değildir; kazanç ancak iş yükü, ek maliyeti aştığında ortaya çıkar.</
      7. YAPAY ZEKA KULLANIM BEYANI
 ══════════════════════════════════════════════════════ -->
 <h2 id="bolum7">7. Yapay Zeka Kullanım Beyanı</h2>
-<table class="yz-tablo">
-  <tr><th>Yapay Zeka Aracı</th><th>Sürüm</th><th>Kullanılan Bölümler</th></tr>
-  <tr>
-    <td><strong>Claude Code (Anthropic)</strong></td>
-    <td>claude-opus-4-8</td>
-    <td>Ray Casting kod çatısı, sıralı/paralel çözüm, görselleştirme, benchmark döngüsü, rapor metni</td>
-  </tr>
-</table>
-<h3>Öğrencinin Bağımsız Katkıları</h3>
-<ul>
-  <li>Problem seçimi (Grup 4) ve konkav test poligonu tasarımı</li>
-  <li>Paralelleştirme stratejisinin (veri paralelliği, thread sayısı) belirlenmesi</li>
-  <li>Deney parametrelerinin (nokta sayıları, thread aralığı) seçimi</li>
-  <li>Programı çalıştırma, süre ölçümlerini alma ve sonuçları doğrulama</li>
-  <li>Sonuçların yorumlanması ve hızlanma/verimlilik analizinin değerlendirilmesi</li>
-</ul>
-<div class="kutu" style="margin-top:12px;">
-  <strong>Açıklama:</strong> Yapay zeka aracı yardımcı kodlama asistanı olarak kullanılmıştır.
-  Üretilen kodların tamamı öğrenci tarafından çalıştırılarak doğrulanmış; problem seçimi,
-  algoritma kararları ve sonuç yorumlamaları bağımsız olarak gerçekleştirilmiştir.
-</div>
+<p style="font-size:9pt;">Yardımcı kodlama asistanı olarak <strong>Claude Code (Anthropic,
+claude-opus-4-8)</strong> kullanılmış; kod çatısı, görselleştirme, benchmark döngüsü ve rapor
+metninde destek alınmıştır. Problem seçimi, poligon tasarımı, paralelleştirme stratejisi,
+deney parametreleri, programın çalıştırılıp doğrulanması ve sonuçların yorumlanması öğrenci
+tarafından bağımsız gerçekleştirilmiş; üretilen kodların tamamı öğrenci tarafından
+doğrulanmıştır.</p>
 
-<hr style="margin-top:36px; border:none; border-top:1px solid #ccc;">
-<p style="text-align:center; font-size:9.5pt; color:#888; margin-top:10px;">
+<hr style="margin-top:12px; border:none; border-top:1px solid #ccc;">
+<p style="text-align:center; font-size:9pt; color:#888; margin-top:6px;">
   Bir Noktanın Poligon İçinde Olup Olmadığının Paralel Tespiti &nbsp;|&nbsp;
   Mustafa Can Ersoy · 20360859046 &nbsp;|&nbsp;
   Bursa Teknik Üniversitesi &nbsp;|&nbsp; Haziran 2026
